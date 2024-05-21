@@ -1,12 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StoredProcedure.Data;
+using StoredProcedure.Models;
 
-namespace StoredProcedure.Controllers
+
+namespace StoredProcedure.Controllers;
+
+public class EmployeeController : Controller
 {
-    public class EmployeeController : Controller
+    public StoredProcDbContext _context;
+
+    public EmployeeController
+        (
+            StoredProcDbContext context
+        )
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _context = context;
+    }
+    public IActionResult Index()
+    {
+        return View();
+    }
+    public IEnumerable<Employee> SearchResult()
+    {
+        var result = _context.Employees
+            .FromSqlRaw<Employee>("spSearchEmployees")
+            .ToList();
+
+        return result;
     }
 }
